@@ -119,7 +119,7 @@ class MSA:
         return pairwise_scores
 
 
-class Assembly(MSA):
+class SequenceAssembly(MSA):
 
     def __init__(self, sequences: list):
         super().__init__()
@@ -150,7 +150,7 @@ class Assembly(MSA):
         elif ind2 > ind1:
             return seq2[:ind2]+seq1
 
-    def seq_assembly(self, sequences: list):
+    def de_novo_assembly(self, sequences: list):
         seqs = deepcopy(sequences)
         # joining sequence ends to return one long continuous sequence (contig)
         while len(seqs) > 1:
