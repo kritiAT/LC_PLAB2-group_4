@@ -4,13 +4,29 @@ from copy import deepcopy
 
 
 class MSA:
+    """ Tools for performing sequence alignment. """
 
     def __init__(self):
+        # Scoring matrix for aligning identical fragments nucleotide sequence.
         self.scoring_matrix = {'AA': 1, 'AT': -4, 'AG': -4, 'AC': -4, 'TT': 1,
                                'GT': -4, 'CT': -4, 'GG': 1, 'CG': -4, 'CC': 1}
 
-    def pairwise_alignment(self, seq1: str, seq2: str, print_output: bool = False):
-        """Smith-Waterman local alignment"""
+    def pairwise_alignment(self, seq1: str, seq2: str, print_output: bool = False) -> tuple:
+        """
+        Performs pairwise sequence alignment using local alignment method.
+        Smith-Waterman algorithm is used with some modifications to align identical sequence ends.
+        Args:
+            seq1: (str) sequence 1
+            seq2: (str) sequence 2
+            print_output: (bool) option to print formatted output. Default False
+
+        Returns:
+            tuple(int, float, str)
+            alignment_score: (int) highest score of alignmnet
+            seq_identity: (float) percentage of identical matches
+            aligned_seq1: (str) matched fragment on sequence
+
+        """
         seq1 = seq1.upper()
         seq2 = seq2.upper()
 
@@ -111,7 +127,16 @@ class MSA:
 
         return alignment_score, seq_identity, aligned_seq1
 
-    def perform_msa(self, sequences: list):
+    def perform_msa(self, sequences: list) -> dict:
+        """
+        Performs multiple sequence alignment of given sequences using pairwise local alignment method.
+        Args:
+            sequences: (list) list of sequences
+
+        Returns:
+            pairwise_scores: (dict) scores (values) of all possible pairs of sequences (keys)
+
+        """
         all_pairs = [(i, j) for i, j in combinations(sequences, 2)]
         pairwise_scores = {}
         # perform pairwise alignment of all sequences
@@ -123,10 +148,11 @@ class MSA:
 
 
 class Assembly(MSA):
+    """ Performs reconstruction of nucleotide sequence from kmers/ short reads. """
 
     def __init__(self, sequences: str, output_path: str = None):
         super().__init__()
-        self._check_path(sequences)
+        self._check_input_path(sequences)
         self.seqs = self._read_seq_file(sequences)
 
         if output_path is not None:
@@ -135,20 +161,62 @@ class Assembly(MSA):
         self.assembled_sequence = self.de_novo_assembly(sequences=self.seqs, output_path=output_path)
 
     @staticmethod
+    def _check_input_path(path: str) -> None:
+        """
+        Checks if the input path format is valid.
+        Args:
+            path: path: (str) path to input file
+
+        Raises:
+            ValueError if output file format not in ['txt', 'fasta', 'fastq']
+
+        """
+        file_format = path.split('.')[-1]
+        if file_format not in ['txt', 'fasta', 'fastq']:
+            raise ValueError(f'Format "{file_format}" is not supported for input (supported formats: txt, fasta, fastq)')
+
+    @staticmethod
     def _check_path(path: str) -> None:
+        """
+        Checks if the output path format is valid.
+        Args:
+            path: (str) path to output file
+
+        Raises:
+            ValueError if output file format not in ['txt']
+
+        """
         file_format = path.split('.')[-1]
         if file_format not in ['txt']:
             raise ValueError(f'Format "{file_format}" is not supported (supported formats: txt)')
 
     @staticmethod
-    def _read_seq_file(file_path: str):
+    def _read_seq_file(file_path: str) -> list:
+        """
+        Reads text file containing list of nucleotide sequences
+        Args:
+            file_path: (str) path to file
+
+        Returns:
+            (list) list of sequences
+
+        """
         with open(file_path, 'r') as file:
             return [line.strip().upper() for line in file.readlines()]
 
     @staticmethod
-    def _find_overlapping_ends(seq1: str, seq2: str, aligned_seq: str):
-        """Find if aligned sequence is present at ends of both sequence.
-        Returns false if present in middle or if not present."""
+    def _find_overlapping_ends(seq1: str, seq2: str, aligned_seq: str) -> bool:
+        """
+        Finds if aligned sequence is present at ends of both sequence.
+        Args:
+            seq1: (str) sequence 1
+            seq2: (str) sequence 2
+            aligned_seq: (str) fragment of aligned sequence
+
+        Returns:
+            (bool) False if aligned sequence present in middle of at least one sequence
+
+        """
         if seq1.startswith(aligned_seq) and seq2.endswith(aligned_seq):
             return True
         elif seq2.startswith(aligned_seq) and seq1.endswith(aligned_seq):
@@ -157,8 +225,18 @@ class Assembly(MSA):
             return False
 
     @staticmethod
-    def _merge_overlapping_ends(seq1: str, seq2: str, aligned_seq: str):
-        """aligned seq should be present in both and overlap at ends"""
+    def _merge_overlapping_ends(seq1: str, seq2: str, aligned_seq: str) -> str:
+        """
+        Merges overlapping ends of two sequences.
+        Args:
+            seq1: (str) sequence 1
+            seq2: (str) sequence 2
+            aligned_seq: (str) fragment of sequence overlapping
+
+        Returns:
+            (str) merged sequence
+
+        """
         ind1, ind2 = seq1.find(aligned_seq), seq2.find(aligned_seq)
         # assert that aligned sequence is present in both sequences
         assert ind1 != -1
@@ -169,7 +247,17 @@ class Assembly(MSA):
         elif ind2 > ind1:
             return seq2[:ind2]+seq1
 
-    def de_novo_assembly(self, sequences: list, output_path: str = None):
+    def de_novo_assembly(self, sequences: list, output_path: str = None) -> str:
+        """
+        Performs De Novo sequence assembly using Greedy algorithm.
+        Args:
+            sequences: (list) list of kmers/ short reads
+            output_path: (str) path to output file to store assembled sequence
+
+        Returns:
+            (str) assembled sequence
+
+        """
         seqs = deepcopy(sequences)
         # joining sequence ends to return one long continuous sequence (contig)
         while len(seqs) > 1:

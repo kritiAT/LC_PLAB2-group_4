@@ -3,6 +3,7 @@ import pandas as pd
 
 
 class Transcribe:
+    """ Class for performing transcription process on a dna sequence """
 
     def __init__(self, dna: str, reverse: bool = True, threshold: int = 20, output_path: str = None):
         self._check_input_path(dna)
@@ -23,35 +24,85 @@ class Transcribe:
 
     @staticmethod
     def _check_input_path(path: str) -> None:
+        """
+        Checks if the input path format is valid.
+        Args:
+            path: (str) path to input file
+
+        Raises:
+            ValueError if output file format not in ['txt']
+
+        """
         file_format = path.split('.')[-1]
         if file_format not in ['txt']:
             raise ValueError(f'Format "{file_format}" is not supported for input (supported formats: txt)')
 
     @staticmethod
-    def _read_dna_file(file_path: str):
+    def _read_dna_file(file_path: str) -> str:
+        """
+        Reads text file containing a dna sequence.
+        Args:
+            file_path: (str) path to file
+
+        Returns:
+            (str) dna sequence
+
+        """
         with open(file_path, 'r') as file:
             return file.read().strip()
 
     @staticmethod
     def _check_path(path: str) -> None:
+        """
+        Checks if the output path format is valid.
+        Args:
+            path: (str) path to output file
+
+        Raises:
+            ValueError if output file format not in ['txt', 'csv', 'tsv']
+
+        """
         file_format = path.split('.')[-1]
         if file_format not in ['txt', 'csv', 'tsv']:
             raise ValueError(f'Format "{file_format}" is not supported for output (supported formats: txt, csv, tsv)')
 
     @staticmethod
-    def complementary_dna(dna_seq):
-        """The function returns the complementary strand of the input dna sequence in 5 to 3 direction."""
+    def complementary_dna(dna_seq: str) -> str:
+        """
+        The function returns the complementary strand of the input dna sequence in 5 to 3 direction.
+        Args:
+            dna_seq: (str) dna sequence
+
+        Returns:
+            (str) 5'-3' complementary strand
+
+        """
         return dna_seq.upper().replace("A", "t").replace("T", "a").replace("G", "c").replace("C", "g").upper()[::-1]
 
     @staticmethod
-    def transcribe(dna_seq):
-        """The function returns the mrna strand of the input dna sequence."""
+    def transcribe(dna_seq: str) -> str:
+        """
+        The function returns the mrna strand of the input dna sequence.
+        Args:
+            dna_seq: (str) dna sequence
+
+        Returns:
+            (str) mRNA strand
+
+        """
         return dna_seq.upper().replace("T", "U")
 
     @staticmethod
-    def gene_finder(mrna):
-        """The function finds position of longest protein coding sequence in each open reading frame.
-        Returns set of tuples of coding sequence positions on given sequence for each ORF."""
+    def gene_finder(mrna: str) -> set:
+        """
+        Finds positions of the longest protein coding sequences in each open reading frame (ORF).
+        Args:
+            mrna: (str) mRNA strand
+
+        Returns:
+            all_positions: (set[tuple]) tuples of coding sequence positions on given sequence for each ORF.
+
+        """
         all_positions = set()
         for n in range(3):
             frame = mrna[n:]
@@ -73,13 +124,30 @@ class Transcribe:
         return all_positions
 
     @staticmethod
-    def _filter_sequence(positions, threshold):
-        """The function returns a dictionary of positions of genes with minimum length of amino acid sequence
-        atleast equal to the threshold."""
+    def _filter_sequence(positions: set, threshold: int) -> list:
+        """
+        Filters out short sequences with length less than the threshold.
+        Args:
+            positions: (set[tuple]) tuples of coding sequence positions.
+            threshold: (int) minimum length of amino-acid sequence (excluding start and stop codon)
+
+        Returns:
+            (list[tuple])  tuples of coding sequence positions with length at least equal to the threshold.
+
+        """
         return list(filter(lambda x: abs(x[1] - x[0]) >= int(threshold + 2) * 3, positions))
 
-    def gene_sequences(self, print_output: bool = False):
-        """The function returns list of all the ORF sequences."""
+    def gene_sequences(self, print_output: bool = False) -> dict:
+        """
+        Performs exon splicing. Extracts coding sequences from mRNA strand
+        The function returns list of all the ORF sequences.
+        Args:
+            print_output: (bool) option to print formatted output. Default False
+
+        Returns:
+            genes: (dict) spliced exon sequences with positions on corresponding strand
+
+        """
         # find position of genes
         gene_pos_dna = self.gene_finder(self.f_mrna)
         gene_pos_cdna = self.gene_finder(self.r_mrna)
@@ -113,6 +181,7 @@ class Transcribe:
         return genes
 
     def __genes_data(self):
+        """ Returns pandas dataframe with spliced exons information """
         genes_data = pd.DataFrame(columns=['strand', 'position', 'sequence'])
 
         strand = ['forward' for _ in range(len(self.genes['forward']))]
@@ -135,7 +204,16 @@ class Transcribe:
 
         return genes_data
 
-    def store_genes(self, path: str):
+    def store_genes(self, path: str) -> None:
+        """
+        Writes spliced exon information in output file
+        Args:
+            path: (str) path to output path
+
+        Raises:
+            ValueError if output file format not in ['txt', 'csv', 'tsv']
+
+        """
         file_format = path.split('.')[-1]
 
         if file_format == 'csv':
@@ -162,4 +240,3 @@ class Translate:
     # initialise codon table
     # translation function
     pass
-

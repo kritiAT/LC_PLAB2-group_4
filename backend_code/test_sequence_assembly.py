@@ -1,3 +1,5 @@
+""" Tests for sequence_assembly module. """
+
 from sequence_assembly import MSA, Assembly
 import pytest
 import os
@@ -9,9 +11,10 @@ TGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCCGAAGAAGCAGGGGCCGCGGTAGCTGCCGAAT
 
 
 class TestMSA:
-    """ Test class for MSA class in sequence assembly module."""
+    """ Test class for MSA class in sequence assembly module. """
 
     def test_pairwise_alignment(self):
+        """ Checks weather pairwise alignment algorithm correctly aligns identical sequences. """
         test_seq1 = 'CTGGTAGCAGTAGCGTTTAAAGCGC'
         test_seq2 = 'GCAGTAGCGTTTAAAGCGCAATGCA'
         test_seq3 = 'ctttgagcgtttaaagcagtgccgg'
@@ -28,7 +31,8 @@ class TestMSA:
         assert identity2 == 100.0
         assert aligned_seq2 == 'AGCGTTTAAAGC'
 
-    def test_perform_mas(self):
+    def test_perform_msa(self):
+        """ Tests if multiple sequence alignment functions as expected. """
         test_seqs = ['CTGGTAGCAGTAGCGTTTAAAGCGC',
                      'GCAGTAGCGTTTAAAGCGCAATGCA',
                      'GAAATGCTATTCAATGCATTGATGC']
@@ -42,9 +46,11 @@ class TestMSA:
 
 
 class TestAssembly:
-    """ Test class for MSA class in sequence assembly module."""
+    """ Test class for Assembly class in sequence assembly module. """
 
     def test_de_novo_assembly(self):
+        """ Checks weather the reconstructed sequence is correctly assembled.
+        Tests if output saved to file with correct format. """
         input_file = 'kmer_seqs.txt'
         out_file = 'outfile.txt'
         wrong_path = 'outfile.png'

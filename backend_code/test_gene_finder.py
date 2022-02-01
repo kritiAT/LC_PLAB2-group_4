@@ -1,3 +1,5 @@
+""" Tests for gene_finder module. """
+
 import os
 import pytest
 
@@ -8,6 +10,8 @@ class TestTranscribe:
     """ Test class for Transcribe class in gene finder module."""
 
     def test_gene_sequences(self):
+        """ Checks if correct exon sequences are resulted.
+         Tests if files with correct format are accepted. """
         dna_sequence = 'dna_seq.txt'
 
         obj = Transcribe(dna_sequence, reverse=True, threshold=3, output_path='result1.txt')
@@ -41,6 +45,7 @@ class TestTranscribe:
             Transcribe(dna='test_seq.png')
 
     def test_store_genes(self):
+        """ Tests weather error is raised if wrong file format is given. """
         dna_sequence = 'dna_seq.txt'
 
         with pytest.raises(ValueError, match=r".* not supported .*"):
