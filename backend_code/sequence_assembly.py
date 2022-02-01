@@ -11,6 +11,9 @@ class MSA:
 
     def pairwise_alignment(self, seq1: str, seq2: str, print_output: bool = False):
         """Smith-Waterman local alignment"""
+        seq1 = seq1.upper()
+        seq2 = seq2.upper()
+
         n = len(seq1)
         m = len(seq2)
 
@@ -119,12 +122,28 @@ class MSA:
         return pairwise_scores
 
 
-class SequenceAssembly(MSA):
+class Assembly(MSA):
 
-    def __init__(self, sequences: list):
+    def __init__(self, sequences: str, output_path: str = None):
         super().__init__()
-        self.seqs = sequences
-        self.assembled = None
+        self._check_path(sequences)
+        self.seqs = self._read_seq_file(sequences)
+
+        if output_path is not None:
+            self._check_path(output_path)
+
+        self.assembled_sequence = self.de_novo_assembly(sequences=self.seqs, output_path=output_path)
+
+    @staticmethod
+    def _check_path(path: str) -> None:
+        file_format = path.split('.')[-1]
+        if file_format not in ['txt']:
+            raise ValueError(f'Format "{file_format}" is not supported (supported formats: txt)')
+
+    @staticmethod
+    def _read_seq_file(file_path: str):
+        with open(file_path, 'r') as file:
+            return [line.strip().upper() for line in file.readlines()]
 
     @staticmethod
     def _find_overlapping_ends(seq1: str, seq2: str, aligned_seq: str):
@@ -150,7 +169,7 @@ class SequenceAssembly(MSA):
         elif ind2 > ind1:
             return seq2[:ind2]+seq1
 
-    def de_novo_assembly(self, sequences: list):
+    def de_novo_assembly(self, sequences: list, output_path: str = None):
         seqs = deepcopy(sequences)
         # joining sequence ends to return one long continuous sequence (contig)
         while len(seqs) > 1:
@@ -173,29 +192,33 @@ class SequenceAssembly(MSA):
                 else:  # if no overlapping ends, check next highest scoring pairwise alignment
                     pass
 
-        self.assembled = seqs[0]
+        if output_path is not None:
+            self._check_path(output_path)
+            with open(output_path, 'w') as file:
+                file.write(f'{seqs[0]}\n')
+
         return seqs[0]
 
 
-class AlignmentTools:
-
-    @staticmethod
-    def single_fasta_sequence(filepath: str):
-        with open(filepath, 'r') as data:
-            file = data.readlines()
-            header = file[0].strip()[1:]
-            sequence = ''.join([line.strip() for line in file[1:]])
-            return header, sequence
-
-    @staticmethod
-    def fasta_list(filepath: str):
-        with open(filepath, 'r') as data:
-            file = data.read()
-            sequences = file.split('>')[1:]
-            list_seqs = []
-            for sequence in sequences:
-                seq_parts = sequence.partition('\n')
-                header = seq_parts[0]
-                seq = seq_parts[2].replace('\n', '')
-                list_seqs.append((header, seq))
-            return list_seqs
+# class FastaTools:
+#
+#     @staticmethod
+#     def single_fasta_sequence(filepath: str):
+#         with open(filepath, 'r') as data:
+#             file = data.readlines()
+#             header = file[0].strip()[1:]
+#             sequence = ''.join([line.strip() for line in file[1:]])
+#             return header, sequence
+#
+#     @staticmethod
+#     def fasta_list(filepath: str):
+#         with open(filepath, 'r') as data:
+#             file = data.read()
+#             sequences = file.split('>')[1:]
+#             list_seqs = []
+#             for sequence in sequences:
+#                 seq_parts = sequence.partition('\n')
+#                 header = seq_parts[0]
+#                 seq = seq_parts[2].replace('\n', '')
+#                 list_seqs.append((header, seq))
+#             return list_seqs
