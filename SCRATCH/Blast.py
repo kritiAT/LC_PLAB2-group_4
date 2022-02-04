@@ -126,5 +126,5 @@ def Blast_orfs (OrfList, filename):
         dict_matches[orf] = list_matches
         time.sleep(10)                 # Do not contact the server more often than once every 10 seconds.
     print ("The job is complete for all the sequences!")
-    return dict_m
+    return dict_matches
         
