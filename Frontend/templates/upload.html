@@ -1,0 +1,154 @@
+<head>
+<!DOCTYPE html>
+<html lang="en">
+<title>Index</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-black.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
+.w3-sidebar {
+  z-index: 3;
+  width: 250px;
+  top: 43px;
+  bottom: 0;
+  height: inherit;
+}
+span { 
+    display:block;
+    width:100%;
+    word-wrap:break-word;
+}
+
+</style>
+</head>
+<body>
+
+
+<div class="w3-top">
+  <div class="w3-bar w3-theme w3-top w3-left-align w3-large">
+    <a class="w3-bar-item w3-button w3-right w3-hide-large w3-hover-white w3-large w3-theme-l1" href="javascript:void(0)" onclick="w3_open()"><i class="fa fa-bars"></i></a>
+    <a href="/" class="w3-bar-item w3-button w3-theme-l1">Home</a>
+  </div>
+</div>
+
+
+<nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left" id="mySidebar">
+  <a href="javascript:void(0)" onclick="w3_close()" class="w3-right w3-xlarge w3-padding-large w3-hover-black w3-hide-large" title="Close Menu">
+    <i class="fa fa-remove"></i>
+  </a>
+  <h4 class="w3-bar-item"><b>Menu</b></h4>
+  <a class="w3-bar-item w3-button w3-hover-black" href="/">Index</a>
+
+</nav>
+
+
+<div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<div class="w3-main" style="margin-left:250px">
+
+  <div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+      <h1 class="w3-text-teal">File upload</h1>
+	  <form action = "/uploader" method = "POST" enctype = "multipart/form-data">
+         <input type = "file" name = "file" />
+         <input type = "submit"/>
+      </form> 
+	  {% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        {{ message }}
+    </div>
+    {% endfor %}
+
+    {% block page_content %}{% endblock %}
+</div>
+
+  <a href="#demo" class="btn btn-info" data-toggle="collapse">Assembled DNA sequence</a>
+  <div id="demo" class="collapse">
+       <span>{{ rs1 }}</span>
+  </div>
+  </br>
+  </br>
+
+    <a href="#demo2" class="btn btn-info" data-toggle="collapse">mRNA sequence transcription</a>
+  <div id="demo2" class="collapse">
+       <span>{{ rs2 }}</span>
+  </div>
+    </br>
+    </br>
+  
+      <a href="#demo3" class="btn btn-info" data-toggle="collapse">Protein prediction</a>
+  <div id="demo3" class="collapse">
+       <span>{{ rs3 }}</span>
+  </div>
+
+
+{% endblock %}
+      <p>
+	  </div>
+    <div class="w3-third w3-container">
+      <p></p>
+      <p></p>
+    </div>
+  </div>
+
+  <div class="w3-row">
+    <div class="w3-twothird w3-container">
+      <h1 class="w3-text-teal"></h1>
+      <p>
+	  </div>
+    <div class="w3-third w3-container">
+      <p></p>
+      <p>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  <br>
+	  </p>
+    </div>
+  </div>
+
+  <div class="w3-row w3-padding-64">
+    <div class="w3-twothird w3-container">
+      <h1 class="w3-text-teal"></h1>
+      <p></div>
+    <div class="w3-third w3-container">
+      <p></p>
+      <p ></p>
+    </div>
+  </div>
+
+
+  <footer id="myFooter">
+    <div class="w3-container w3-theme-l2 w3-padding-32">
+      <h4><a href="https://gitlab.informatik.uni-bonn.de/bschultz/group_4">Group 4 Gitlab repository</a></h4>
+    </div>
+
+    <div class="w3-container w3-theme-l1">
+    </div>
+  </footer>
+
+
+</div>
+
+
+</body>
+</html>
