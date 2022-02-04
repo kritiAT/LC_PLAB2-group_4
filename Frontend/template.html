@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block heading %}
+  {{ super() }}
+{% endblock %}
+{% block content %}
+  <h3>Symbol Information Tool</h3>
+  <form method="POST" action="/info">
+    <textarea name="textbox"></textarea>
+    <button type="submit" name="submit">Submit</button>
+  </form>
+  {% if symbol %}
+    <h3>Result for : {{symbol}}</h3>
+    <br>
+    {% if ids %}
+      <table>
+        <thead>
+          <tr>
+            <th> NAME </th>
+            <th> HGNC </th>
+            <th> ENSEMBL </th>
+            <th> UNIPROT </th>
+            <th> TAXONOMY </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+              <td>{{ids['fullname']}}</td>
+              <td>{{ids['hgnc_id']}}</td>
+              <td>{{ids['ensembl']}}</td>
+              <td>{{ids['accession']}}</td>
+              <td>{{ids['tax_id']}}</td>
+          </tr>
+        </tbody>
+      </table>
+    {% else %}
+        <div>No information found for {{symbol}}</div>
+    {% endif %}
+  {% endif %}
+  <br>
+  <br>
+  <h4>Shortest Path Tool</h4>
+  <h5>Please enter two HGNC symbols seperated by a comma ","</h5>
+  <form method="POST" action="/path">
+    <textarea name="text"></textarea>
+    <button type="submit" name="submit">Submit</button>
+  </form>
+  <br>
+  {% if path %}
+      <p>Source: {{source}}</p>
+      <p>Target: {{target}}</p>
+      <p>Path (from top to bottom) :</p>
+      <ul>
+        {% for n in path %}
+        <li>{{n}}</li>
+        {% endfor %}
+      </ul>
+  {% endif %}
+  <br>
+  <h3>{{message}}</h3>
+  <br>
+{% endblock %}
