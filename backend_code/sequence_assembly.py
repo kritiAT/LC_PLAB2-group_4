@@ -288,25 +288,59 @@ class Assembly(MSA):
         return seqs[0]
 
 
-# class FastaTools:
-#
-#     @staticmethod
-#     def single_fasta_sequence(filepath: str):
-#         with open(filepath, 'r') as data:
-#             file = data.readlines()
-#             header = file[0].strip()[1:]
-#             sequence = ''.join([line.strip() for line in file[1:]])
-#             return header, sequence
-#
-#     @staticmethod
-#     def fasta_list(filepath: str):
-#         with open(filepath, 'r') as data:
-#             file = data.read()
-#             sequences = file.split('>')[1:]
-#             list_seqs = []
-#             for sequence in sequences:
-#                 seq_parts = sequence.partition('\n')
-#                 header = seq_parts[0]
-#                 seq = seq_parts[2].replace('\n', '')
-#                 list_seqs.append((header, seq))
-#             return list_seqs
+class FastaTools:
+
+    @staticmethod
+    def single_fasta_sequence(filepath: str):
+        """
+        Extracts the sequences from a fastq file containing single sequence
+        Args:
+            filepath: (str) path to file
+
+        Returns:
+            (tuple[str]) header and sequence
+
+        """
+        with open(filepath, 'r') as data:
+            file = data.readlines()
+            header = file[0].strip()[1:]
+            sequence = ''.join([line.strip() for line in file[1:]])
+            return header, sequence
+
+    @staticmethod
+    def fasta_list(filepath: str):
+        """
+        Extracts the sequences from a FASTA file
+        Args:
+            filepath: (str) path to file
+
+        Returns:
+            (list) list of sequences
+
+        """
+        with open(filepath, 'r') as data:
+            file = data.read()
+            sequences = file.split('>')[1:]
+            list_seqs = []
+            for sequence in sequences:
+                seq_parts = sequence.partition('\n')
+                header = seq_parts[0]
+                seq = seq_parts[2].replace('\n', '')
+                list_seqs.append((header, seq))
+            return list_seqs
+
+    @staticmethod
+    def fastq_list(filepath: str):
+        """
+        Extracts the sequences from a FASTQ file
+        Args:
+            filepath: (str) path to file
+
+        Returns:
+            (list) list of sequences
+
+        """
+        with open(filepath, 'r') as data:
+            file = data.read()
+            records = file.split('@')[1:]
+            return [record.split('\n')[1] for record in records]
