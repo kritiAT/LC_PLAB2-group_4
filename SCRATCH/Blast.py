@@ -79,8 +79,8 @@ def is_html(output_file):
 def html_reader(file):
     
     """Read an html file and returns the list of accessions"""
-    
-    with open (file,"r") as f:
+    filepath = os.path.join(DATA_CACHE, file) 
+    with open (filepath,"r") as f:
         list_accessions =[]
         for line in f.readlines():
             if "<tr id=" in line:
