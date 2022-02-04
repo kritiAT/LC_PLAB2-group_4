@@ -1,6 +1,6 @@
 """ Tests for sequence_assembly module. """
 
-from sequence_assembly import MSA, Assembly
+from sequence_assembly import MSA, Assembly, FastaTools
 import pytest
 import os
 
@@ -8,6 +8,26 @@ from itertools import combinations
 
 final_seq = 'CTTTATTTTCACCACAAACAGAGATTAAAGAAAGTGTTGGATTAAAAGATGGTGTTAAAGAGTAAAAATTGACTTATTATACTCCTGAATACGAAACCAAAGATAC\
 TGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCCGAAGAAGCAGGGGCCGCGGTAGCTGCCGAATCTTCTACCGGTACA'
+
+
+class TestFastaTools:
+    """ Test class for FastaTools class in sequence assembly module. """
+
+    def test_fasta_list(self):
+        """ Checks if input FASTA files are read correctly. """
+        check = 'GGTTAAGATGATCAATTAACAA'
+        fasta = FastaTools().fasta_list('fasta_dummy.fasta')
+
+        assert len(fasta) == 2
+        assert fasta[1] == check
+
+    def test_fastq_list(self):
+        """ Checks if input FASTQ files are read correctly. """
+        check = 'ATATCTAGGGCATAT'
+        fastq = FastaTools().fastq_list('fastq_dummy.fastq')
+
+        assert len(fastq) == 4
+        assert fastq[2] == check
 
 
 class TestMSA:
@@ -50,18 +70,26 @@ class TestAssembly:
 
     def test_de_novo_assembly(self):
         """ Checks weather the reconstructed sequence is correctly assembled.
+        Tests if input files are accepted extensions are accepted.
         Tests if output saved to file with correct format. """
-        input_file = 'kmer_seqs.txt'
+        input_file1 = 'kmer_seqs.txt'
+        input_file2 = 'fastq_dummy.fastq'
+        check_seq = 'CCCATATCTAGGGCATATTTACTCCCGTATCA'
         out_file = 'outfile.txt'
         wrong_path = 'outfile.png'
 
-        obj = Assembly(sequences=input_file, output_path=out_file)
+        obj = Assembly(sequences=input_file1, output_path=out_file)
         out_seq = obj.assembled_sequence
 
         assert out_seq == final_seq
         assert os.path.exists(out_file) is True  # checks if output file exists
         os.remove(out_file)
 
+        obj2 = Assembly(sequences=input_file2)
+        seq = obj2.assembled_sequence
+
+        assert seq == check_seq
+
         # check if raises error for wrong file format
         with pytest.raises(ValueError, match=r".* not supported .*"):
-            Assembly(sequences=input_file, output_path=wrong_path)
+            Assembly(sequences=input_file1, output_path=wrong_path)
