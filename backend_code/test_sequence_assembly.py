@@ -6,7 +6,7 @@ import os
 
 from itertools import combinations
 
-final_seq = 'CTTTATTTTCACCACAAACAGAGATTAAAGAAAGTGTTGGATTAAAAGATGGTGTTAAAGAGTAAAAATTGACTTATTATACTCCTGAATACGAAACCAAAGATAC\
+check_seq1 = 'CTTTATTTTCACCACAAACAGAGATTAAAGAAAGTGTTGGATTAAAAGATGGTGTTAAAGAGTAAAAATTGACTTATTATACTCCTGAATACGAAACCAAAGATAC\
 TGATATCTTGGCAGCATTCCGAGTAACTCCTCAACCTGGAGTTCCACCCGAAGAAGCAGGGGCCGCGGTAGCTGCCGAATCTTCTACCGGTACA'
 
 
@@ -74,22 +74,32 @@ class TestAssembly:
         Tests if output saved to file with correct format. """
         input_file1 = 'kmer_seqs.txt'
         input_file2 = 'fastq_dummy.fastq'
-        check_seq = 'CCCATATCTAGGGCATATTTACTCCCGTATCA'
+        input_file3 = 'fasta_dummy.fasta'
+        check_seq2 = 'CCCATATCTAGGGCATATTTACTCCCGTATCA'
+        check_seq3 = 'AAAAGAGTCTAAAGGTTAAGATGATCAATTAACAA'
         out_file = 'outfile.txt'
-        wrong_path = 'outfile.png'
+        wrong_path = 'file.png'
 
         obj = Assembly(sequences=input_file1, output_path=out_file)
         out_seq = obj.assembled_sequence
 
-        assert out_seq == final_seq
+        assert out_seq == check_seq1
         assert os.path.exists(out_file) is True  # checks if output file exists
         os.remove(out_file)
 
         obj2 = Assembly(sequences=input_file2)
-        seq = obj2.assembled_sequence
+        seq2 = obj2.assembled_sequence
 
-        assert seq == check_seq
+        assert seq2 == check_seq2
+
+        obj3 = Assembly(sequences=input_file3)
+        seq3 = obj3.assembled_sequence
+
+        assert seq3 == check_seq3
 
         # check if raises error for wrong file format
         with pytest.raises(ValueError, match=r".* not supported .*"):
             Assembly(sequences=input_file1, output_path=wrong_path)
+
+        with pytest.raises(ValueError, match=r".* not supported .*"):
+            Assembly(sequences=wrong_path)
