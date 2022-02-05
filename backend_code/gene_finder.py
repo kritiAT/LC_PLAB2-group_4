@@ -6,8 +6,11 @@ class Transcribe:
     """ Class for performing transcription process on a dna sequence """
 
     def __init__(self, dna: str, reverse: bool = True, threshold: int = 20, output_path: str = None):
-        self._check_input_path(dna)
-        self.dna = self._read_dna_file(dna)
+        if '.' in dna:
+            self._check_input_path(dna)
+            self.dna = self._read_dna_file(dna)
+        else:
+            self.dna = dna
         self.reverse = reverse
         self.threshold = threshold
 
