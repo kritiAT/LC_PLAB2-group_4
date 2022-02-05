@@ -1,3 +1,6 @@
+
+from constants import scoring_matrix
+
 import numpy as np
 from itertools import combinations
 from copy import deepcopy
@@ -49,9 +52,7 @@ class MSA:
     """ Tools for performing sequence alignment. """
 
     def __init__(self):
-        # Scoring matrix for aligning identical fragments nucleotide sequence.
-        self.scoring_matrix = {'AA': 1, 'AT': -4, 'AG': -4, 'AC': -4, 'TT': 1,
-                               'GT': -4, 'CT': -4, 'GG': 1, 'CG': -4, 'CC': 1}
+        self.scoring_matrix = scoring_matrix
 
     def pairwise_alignment(self, seq1: str, seq2: str, print_output: bool = False) -> tuple:
         """
