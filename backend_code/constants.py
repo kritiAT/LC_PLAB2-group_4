@@ -1,3 +1,5 @@
+""" Constants for the package. """
+
 # Scoring matrix for aligning identical fragments nucleotide sequence.
 scoring_matrix = {'AA': 1, 'AT': -4, 'AG': -4, 'AC': -4, 'TT': 1,
                   'GT': -4, 'CT': -4, 'GG': 1, 'CG': -4, 'CC': 1}
