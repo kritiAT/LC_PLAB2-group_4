@@ -6,7 +6,7 @@ import os
 home_dir = str(Path.home())
 PROJECT_DIR = os.path.join(home_dir, ".Project03", "Group4")
 DATA_CACHE = os.path.join(PROJECT_DIR, "data")
-os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(DATA_CACHE, exist_ok=True)
 
 # LOG_DIR = os.path.join(PROJECT_DIR, "logs")
 # os.makedirs(LOG_DIR, exist_ok=True)
