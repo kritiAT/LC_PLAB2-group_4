@@ -102,7 +102,6 @@ table.dataframe, .dataframe th, .dataframe td {
   
       <a href="#demo3" class="btn btn-info" data-toggle="collapse">Protein prediction</a>
   <div id="demo3" class="collapse" >
-  </br>
        	<button type="button" onclick="tableToCSV()">
             Download as CSV
         </button>
