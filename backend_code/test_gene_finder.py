@@ -1,17 +1,15 @@
-""" Tests for gene_finder module. """
+""" Test module for gene_finder module. """
 
 import os
 import pytest
 
-from gene_finder import Transcribe
+from gene_finder import Transcribe, Translate
 
 
 class TestTranscribe:
     """ Test class for Transcribe class in gene finder module."""
 
     def test_gene_sequences(self):
-        """ Checks if correct exon sequences are resulted.
-         Tests if files with correct format are accepted. """
         dna_sequence = 'dna_seq.txt'
 
         obj = Transcribe(dna_sequence, reverse=True, threshold=3, output_path='result1.txt')
@@ -45,8 +43,25 @@ class TestTranscribe:
             Transcribe(dna='test_seq.png')
 
     def test_store_genes(self):
-        """ Tests weather error is raised if wrong file format is given. """
         dna_sequence = 'dna_seq.txt'
 
         with pytest.raises(ValueError, match=r".* not supported .*"):
             Transcribe(dna_sequence).store_genes(path='result5.png')
+
+
+class TestTranslate:
+    """ Test class for Translate class in gene finder module."""
+
+    def test_translation(self):
+        obj = Translate(dna='dna_seq.txt', reverse=True, threshold=3, output_path='result6.csv')
+        table = obj.proteins_table
+        proteins = obj.proteins
+        testlist = ['SLTTVL', 'LWFL']
+
+        assert table.shape == (4, 3)
+        assert [proteins[1], proteins[3]] == testlist
+        assert os.path.exists('result6.csv') is True  # checks if output file exists
+        os.remove('result6.csv')
+
+        with pytest.raises(AssertionError, match=r".* should be greater .*"):
+            Translate(dna='dna_seq.txt', reverse=True, threshold=-3)
