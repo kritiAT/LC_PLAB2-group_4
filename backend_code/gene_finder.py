@@ -1,13 +1,16 @@
-# for protein prediction
 import pandas as pd
+from constants import codon_table
 
 
 class Transcribe:
     """ Class for performing transcription process on a dna sequence """
 
     def __init__(self, dna: str, reverse: bool = True, threshold: int = 20, output_path: str = None):
-        self._check_input_path(dna)
-        self.dna = self._read_dna_file(dna)
+        if '.' in dna:
+            self._check_input_path(dna)
+            self.dna = self._read_dna_file(dna)
+        else:
+            self.dna = dna
         self.reverse = reverse
         self.threshold = threshold
 
@@ -135,6 +138,8 @@ class Transcribe:
             (list[tuple])  tuples of coding sequence positions with length at least equal to the threshold.
 
         """
+        if not threshold >= 1:
+            raise AssertionError('Threshold should be greater than or equal to 1')
         return list(filter(lambda x: abs(x[1] - x[0]) >= int(threshold + 2) * 3, positions))
 
     def gene_sequences(self, print_output: bool = False) -> dict:
@@ -182,7 +187,7 @@ class Transcribe:
 
     def __genes_data(self):
         """ Returns pandas dataframe with spliced exons information """
-        genes_data = pd.DataFrame(columns=['strand', 'position', 'sequence'])
+        genes_data = pd.DataFrame(columns=['strand', 'position', 'mrna'])
 
         strand = ['forward' for _ in range(len(self.genes['forward']))]
         position = [f'{i}-{j}' for i, j in self.genes['forward'].keys()]
@@ -195,12 +200,12 @@ class Transcribe:
 
             genes_data['strand'] = strand
             genes_data['position'] = position
-            genes_data['sequence'] = seqs
+            genes_data['mrna'] = seqs
 
         else:
             genes_data['strand'] = strand
             genes_data['position'] = position
-            genes_data['sequence'] = seqs
+            genes_data['mrna'] = seqs
 
         return genes_data
 
@@ -228,15 +233,66 @@ class Transcribe:
         return None
 
 
-# Add function to translate the mrna sequence to amino acid sequence
-# using the codon table
-# Test mRNA seq =
-# 'AUGGUCGUCCCCUGUUGGGAUGUACUAUUAAACCUAAAUUGGGGUUAUCCGCUAAAAACUACGGUAGGGCAUGUUAUGAAUGUCUUCGUGGUGGACUUGAUUUUACCAAAGAUGAUGAAAACGUGA'
-# A wrapper function could also be added to take list of mRNA sequences
-# and return list of corresponding amino-acid sequence
-class Translate:
+class Translate(Transcribe):
     """ Class to translate mRNA sequence to amino-acid sequence."""
 
-    # initialise codon table
-    # translation function
-    pass
+    def __init__(self, dna: str = None, reverse: bool = True, threshold: int = 20, output_path: str = None):
+        self.codon_table = codon_table
+
+        super().__init__(dna=dna, reverse=reverse, threshold=threshold)
+        self.proteins = None
+        self.proteins_table = None
+        self._translation()  # perform translation of all mrna sequences
+        if output_path is not None:
+            self._check_path(output_path)
+            self.store_proteins(path=output_path)
+
+    def translate(self, mrna: str) -> str:
+        """
+        The function returns amino-acid sequence of mRNA strand
+        Args:
+            mrna: (str) mRNA sequence
+
+        Returns:
+            protein: (str) amino-acid sequence
+
+        """
+        protein = ''
+        for i in range(0, len(mrna), 3):
+            codon = mrna[i:i + 3]
+            if codon == 'AUG':  # exclude start codon from amino-acid sequence
+                pass
+            elif self.codon_table[codon] == '*':  # stop when stop codon is read
+                break
+            else:
+                protein += self.codon_table[codon]
+        return protein
+
+    def _translation(self):
+        """ Wrapper function to perform translation of orf genes. """
+        self.genes_data['protein'] = self.genes_data.apply(lambda x: self.translate(x.mrna), axis=1)
+        self.proteins = list(self.genes_data['protein'])
+        self.proteins_table = self.genes_data.drop(columns='mrna')
+
+    def store_proteins(self, path: str) -> None:
+        """
+        Writes proteins information in output file
+        Args:
+            path: (str) path to output path
+
+        Raises:
+            ValueError if output file format not in ['txt', 'csv', 'tsv']
+
+        """
+        file_format = path.split('.')[-1]
+
+        if file_format == 'csv':
+            self.proteins_table.to_csv(path, sep=',', header=False, index=False)
+        elif file_format == 'tsv':
+            self.proteins_table.to_csv(path, sep='\t', header=False, index=False)
+        elif file_format == 'txt':
+            self.proteins_table.to_csv(path, sep=' ', header=False, index=False)
+        else:
+            raise ValueError(f'Format "{file_format}" is not supported (supported formats: csv, tsv, txt)')
+
+        return None
