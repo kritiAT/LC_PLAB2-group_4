@@ -22,6 +22,7 @@ breake and the function *get_results* will return the response object. The respo
 extract the html (default) or json results. In the case of json results, they will be downloaded as zip file.
 These files will be red by the function *html_reader* or *zip_reader* will take as input the string path of the downloaded files
 and will extract the result IDs of the predicted proteins, which will be returned as a list.
+
 The wrapper function *Blast_orfs* will loop into a list of compiled aminoacidic sequence and
 will return a dictionary where the keys are the sequences and the values are the list of IDs.
 
