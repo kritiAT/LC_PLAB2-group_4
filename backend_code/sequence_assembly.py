@@ -1,58 +1,15 @@
-
-from constants import scoring_matrix
-
 import numpy as np
 from itertools import combinations
 from copy import deepcopy
-
-
-class FastaTools:
-    """ Tools for dealing with fasta files. """
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def fasta_list(filepath: str):
-        """
-        Extracts the sequences from a FASTA file
-        Args:
-            filepath: (str) path to file
-
-        Returns:
-            (list) list of sequences
-
-        """
-        with open(filepath, 'r') as data:
-            file = data.read()
-            sequences = file.split('>')[1:]
-            list_seqs = []
-            for sequence in sequences:
-                seq = sequence.partition('\n')[2].replace('\n', '')
-                list_seqs.append(seq)
-            return list_seqs
-
-    @staticmethod
-    def fastq_list(filepath: str):
-        """
-        Extracts the sequences from a FASTQ file
-        Args:
-            filepath: (str) path to file
-
-        Returns:
-            (list) list of sequences
-
-        """
-        with open(filepath, 'r') as data:
-            file = data.read()
-            records = file.split('@')[1:]
-            return [record.split('\n')[1] for record in records]
 
 
 class MSA:
     """ Tools for performing sequence alignment. """
 
     def __init__(self):
-        self.scoring_matrix = scoring_matrix
+        # Scoring matrix for aligning identical fragments nucleotide sequence.
+        self.scoring_matrix = {'AA': 1, 'AT': -4, 'AG': -4, 'AC': -4, 'TT': 1,
+                               'GT': -4, 'CT': -4, 'GG': 1, 'CG': -4, 'CC': 1}
 
     def pairwise_alignment(self, seq1: str, seq2: str, print_output: bool = False) -> tuple:
         """
@@ -190,12 +147,11 @@ class MSA:
         return pairwise_scores
 
 
-class Assembly(FastaTools, MSA):
+class Assembly(MSA):
     """ Performs reconstruction of nucleotide sequence from kmers/ short reads. """
 
     def __init__(self, sequences: str, output_path: str = None):
-        FastaTools.__init__(self)
-        MSA.__init__(self)
+        super().__init__()
         self._check_input_path(sequences)
         self.seqs = self._read_seq_file(sequences)
 
@@ -234,9 +190,10 @@ class Assembly(FastaTools, MSA):
         if file_format not in ['txt']:
             raise ValueError(f'Format "{file_format}" is not supported (supported formats: txt)')
 
-    def _read_seq_file(self, file_path: str) -> list:
+    @staticmethod
+    def _read_seq_file(file_path: str) -> list:
         """
-        Reads file containing list of nucleotide sequences
+        Reads text file containing list of nucleotide sequences
         Args:
             file_path: (str) path to file
 
@@ -244,14 +201,8 @@ class Assembly(FastaTools, MSA):
             (list) list of sequences
 
         """
-        file_format = file_path.split('.')[-1]
-        if file_format == 'txt':
-            with open(file_path, 'r') as file:
-                return [line.strip().upper() for line in file.readlines()]
-        elif file_format == 'fasta':
-            return self.fasta_list(file_path)
-        elif file_format == 'fastq':
-            return self.fastq_list(file_path)
+        with open(file_path, 'r') as file:
+            return [line.strip().upper() for line in file.readlines()]
 
     @staticmethod
     def _find_overlapping_ends(seq1: str, seq2: str, aligned_seq: str) -> bool:
@@ -335,3 +286,61 @@ class Assembly(FastaTools, MSA):
                 file.write(f'{seqs[0]}\n')
 
         return seqs[0]
+
+
+class FastaTools:
+
+    @staticmethod
+    def single_fasta_sequence(filepath: str):
+        """
+        Extracts the sequences from a fastq file containing single sequence
+        Args:
+            filepath: (str) path to file
+
+        Returns:
+            (tuple[str]) header and sequence
+
+        """
+        with open(filepath, 'r') as data:
+            file = data.readlines()
+            header = file[0].strip()[1:]
+            sequence = ''.join([line.strip() for line in file[1:]])
+            return header, sequence
+
+    @staticmethod
+    def fasta_list(filepath: str):
+        """
+        Extracts the sequences from a FASTA file
+        Args:
+            filepath: (str) path to file
+
+        Returns:
+            (list) list of sequences
+
+        """
+        with open(filepath, 'r') as data:
+            file = data.read()
+            sequences = file.split('>')[1:]
+            list_seqs = []
+            for sequence in sequences:
+                seq_parts = sequence.partition('\n')
+                header = seq_parts[0]
+                seq = seq_parts[2].replace('\n', '')
+                list_seqs.append((header, seq))
+            return list_seqs
+
+    @staticmethod
+    def fastq_list(filepath: str):
+        """
+        Extracts the sequences from a FASTQ file
+        Args:
+            filepath: (str) path to file
+
+        Returns:
+            (list) list of sequences
+
+        """
+        with open(filepath, 'r') as data:
+            file = data.read()
+            records = file.split('@')[1:]
+            return [record.split('\n')[1] for record in records]

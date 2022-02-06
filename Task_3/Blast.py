@@ -1,13 +1,9 @@
 import re
 import requests
 import time
-from req import * # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head
-import pandas as pd
-
-ORF1 = "VHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLG"
-OrfList =[ORF1]
-#ORF2 = "QGIINFEQKESNGPVKVWGSIKGLTEGLHGFHVHEFGDNTAGCTSAGPHFNPLSRKHGGPKDEERHVGD"
-#OrfList =[ORF1,ORF2]
+from utils import * # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head, DATA_CACHE
+from pathlib import Path
+import os
 
 def query_Blast (seq, program=Program, database = Database_PDB, filters="", email=""):
     
@@ -26,7 +22,7 @@ def extract_attribute(p, rid_attr):
     """ will go line by line through a file, searching for mentions of the rid_attribute and extract/return the value 
     associated with it.
     """
-    put_response = p.text
+    put_response = p.text # get html/text file
     for line in put_response.splitlines():
         if rid_attr in line:
             attribute_value = re.sub(rid_attr, "", line)
@@ -35,10 +31,19 @@ def extract_attribute(p, rid_attr):
 
 def write_file(filename, s):
     
-    """Given the results of a request (s) it write them in a file with the desired filename"""
-    with open(filename, "w") as file_handle:
+    """Given the results of a request (s) it write them in a file with the desired filename."""
+    
+    path = os.path.join(DATA_CACHE, filename) 
+    with open(path, "w") as file_handle:
         file_handle.write(s.text)
-        print ("The results have been saved in the current folder")
+        print ("The results have been saved in the home folder")
+        
+def _clean_cache ():
+    
+    """ Delete all the cached files in the cache directory"""
+    for f in os.listdir(DATA_CACHE):
+        os.remove(os.path.join(DATA_CACHE, f))
+    return
     
         
 def check_request_status(rid):
@@ -56,10 +61,9 @@ def get_results (rid):
     
     """Once the status of the request is ready, it is possible to get the results of the query"""
 
-    GET_query = GET_query_head + rid    # /CMD=Get&RID=6NTRF1YLO8
+    GET_query = GET_query_head + rid   
     s = requests.get(GET_query)
     if not s.ok:
-        #logger.error(f"{GET_query} returned bad status code: {s.status_code}")
         print (f"{GET_query} returned bad status code: {s.status_code}") 
         return None
     else:
@@ -75,8 +79,8 @@ def is_html(output_file):
 def html_reader(file):
     
     """Read an html file and returns the list of accessions"""
-    
-    with open (file,"r") as f:
+    filepath = os.path.join(DATA_CACHE, file) 
+    with open (filepath,"r") as f:
         list_accessions =[]
         for line in f.readlines():
             if "<tr id=" in line:
@@ -89,7 +93,7 @@ def html_reader(file):
 
 def Blast_sequence (seq, filename):
     
-    """seq= sequence to blast, filename= name of the output file, n = numerical identifier"""
+    """seq: sequence to blast, filename= name of the output file, n = numerical identifier"""
     
     p = query_Blast (seq)                       # Submit the request to the BLAST site
     rid = extract_attribute (p, RID)       # Extract the request id that will be used for next steps
@@ -123,9 +127,4 @@ def Blast_orfs (OrfList, filename):
         time.sleep(10)                 # Do not contact the server more often than once every 10 seconds.
     print ("The job is complete for all the sequences!")
     return dict_matches
-
-
-
-
-
-#df_t
+        

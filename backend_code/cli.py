@@ -1,5 +1,5 @@
 from sequence_assembly import MSA, Assembly
-from gene_finder import Transcribe, Translate
+from gene_finder import Transcribe
 import click
 
 
@@ -68,30 +68,6 @@ def transcription(dna_sequence, reverse, threshold, output, show):
 
     if show is True:
         click.echo(genes_table)
-
-
-@protein_prediction.command('translate')
-@click.argument('dna_sequence', type=click.Path(exists=True))
-@click.option('-r', '--reverse', is_flag=True, default=True, help='Use reverse strand also')
-@click.option('-t', '--threshold', type=int, default=20, help='Threshold for aminoacid sequence length')
-@click.option('-o', '--output', default=None, help='Option to store output')
-@click.option('-p', '--show', is_flag=True, default=False, help='Option to print output')
-def translation(dna_sequence, reverse, threshold, output, show):
-    """
-    Performs process of translation on a given dna sequence.
-    Args:
-        dna_sequence: (str) path to file containing dna sequence
-        reverse: (bool) option to use complementary strand of dna also
-        threshold: (int) minimum length of amino-acid sequence (excluding start and stop codon)
-        output: (str) path to output file
-        show: (bool) option to print output to standout
-
-    """
-    obj = Translate(dna=dna_sequence, reverse=reverse, threshold=threshold, output_path=output)
-    proteins_table = obj.proteins_table
-
-    if show is True:
-        click.echo(proteins_table)
 
 
 if __name__ == '__main__':
