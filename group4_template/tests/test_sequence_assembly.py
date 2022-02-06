@@ -1,6 +1,6 @@
 """ Tests for sequence_assembly module. """
 
-from sequence_assembly import MSA, Assembly, FastaTools
+from group4_template.group4.sequence_assembly import MSA, Assembly, FastaTools
 import pytest
 import os
 
