@@ -4,10 +4,6 @@ import time
 from req import * # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head
 import pandas as pd
 
-ORF1 = "VHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLG"
-#OrfList =[ORF1]
-ORF2 = "QGIINFEQKESNGPVKVWGSIKGLTEGLHGFHVHEFGDNTAGCTSAGPHFNPLSRKHGGPKDEERHVGD"
-OrfList =[ORF1,ORF2]
 
 def query_Blast (seq, program=Program, database = Database_PDB, filters="", email=""):
     
@@ -123,9 +119,3 @@ def Blast_orfs (OrfList, filename):
         time.sleep(10)                 # Do not contact the server more often than once every 10 seconds.
     print ("The job is complete for all the sequences!")
     return dict_matches
-
-
-
-
-
-#df_t

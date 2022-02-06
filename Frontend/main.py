@@ -3,7 +3,7 @@ from task1 import *
 from task2 import *
 from task3 import *
 from werkzeug.utils import secure_filename
-from req import UPLOAD_FOLDER  # faapath
+from req import UPLOAD_FOLDER
 from flask import Flask, flash, render_template, request, redirect, url_for
 
 ALLOWED_EXTENSIONS = {"fasta", "fna", "ffn", "faa", "frn", "fa", "txt", "fastq"}
