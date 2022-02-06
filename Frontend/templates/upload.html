@@ -86,22 +86,29 @@ table.dataframe, .dataframe th, .dataframe td {
     {% block page_content %}{% endblock %}
 </div>
 
-  <a href="#demo" class="btn btn-info" data-toggle="collapse">Assembled DNA sequence</a>
+  <a href="#demo" class="btn btn-info" data-toggle="collapse">Assemble DNA sequence</a>
   <div id="demo" class="collapse">
        <span>{{ rs1 }}</span>
   </div>
   </br>
   </br>
 
-    <a href="#demo2" class="btn btn-info" data-toggle="collapse">mRNA sequence transcription</a>
+    <a href="#demo2" class="btn btn-info" data-toggle="collapse">The resulting mRNA sequence</a>
   <div id="demo2" class="collapse">
        <span>{{ rs2 }}</span>
   </div>
     </br>
     </br>
+	
+	<a href="#demo3" class="btn btn-info" data-toggle="collapse">The reversed mRNA sequence</a>
+  <div id="demo3" class="collapse">
+       <span>{{ rs3 }}</span>
+  </div>
+    </br>
+    </br>
   
-      <a href="#demo3" class="btn btn-info" data-toggle="collapse">Protein prediction</a>
-  <div id="demo3" class="collapse" >
+      <a href="#demo4" class="btn btn-info" data-toggle="collapse">Table of possible amino acid sequences and the proteins they represent</a>
+  <div id="demo4" class="collapse" >
   </br>
        	<button type="button" onclick="tableToCSV()">
             Download as CSV
@@ -111,7 +118,6 @@ table.dataframe, .dataframe th, .dataframe td {
     {% endfor %}
 
   </div>
-
 
 
 {% endblock %}

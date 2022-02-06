@@ -7,7 +7,8 @@ home_dir = Path.home()
 PROJECT_DIR = home_dir.joinpath(".project3")
 DATA_DIR = PROJECT_DIR.joinpath("data")
 UPLOAD_FOLDER = os.path.join(DATA_DIR, 'uploads')
-faapath = os.path.join(UPLOAD_FOLDER, 'file.fasta')
+#faapath = os.path.join(UPLOAD_FOLDER, 'file.txt')
+#textpath= os.path.join(UPLOAD_FOLDER, 'file.txt')
 
 
 # url endpoint
