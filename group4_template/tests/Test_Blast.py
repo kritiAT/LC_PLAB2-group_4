@@ -20,7 +20,7 @@ class TestBlast():
             assert letter in aa, print ("The aminoacidic sequence contain invalid symbols: {}".format(letter))
             
         Query = "QUERY="+toy_orf+"&"
-        PUT_query = URL + PUT_Request + Query + Program + Database 
+        PUT_query = URL + PUT_Request + Query + Program + Database_PDB
         p = requests.put(PUT_query)
         
         # 2. Verify the status of the request:
