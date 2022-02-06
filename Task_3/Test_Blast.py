@@ -7,7 +7,7 @@ from utils import * # URL, PUT_Request, GET_Request, Program, Database_PDB, RID,
 from pathlib import Path
 import os
 from Blast import extract_attribute, check_request_status
-
+# ok
 class TestBlast():
     
     def test_extract_attribute(self):
