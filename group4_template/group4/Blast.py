@@ -5,14 +5,13 @@ import requests
 from group4_template.group4.utils import *  # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head, DATA_CACHE
 
 
-# ok
 # Debug/auxiliary functions:
 
 def _check_query(seq, program=Program, database=Database_PDB, filters="", email=""):
     """ Function for printing the query to submit. Use for debug purpose"""
 
-    Query = "QUERY=" + seq + "&"
-    PUT_query = URL + PUT_Request + Query + program + database + filters + email
+    query = "QUERY=" + seq + "&"
+    PUT_query = URL + PUT_Request + query + program + database + filters + email
     print(PUT_query)
     return PUT_query
 
@@ -21,7 +20,7 @@ def _clean_cache(file=None):
     """ Delete all the cached files in the cache directory. Is possible to specify which file to delete selectively"""
 
     for f in os.listdir(DATA_CACHE):
-        if file == None:
+        if file is None:
             os.remove(os.path.join(DATA_CACHE, f))
         else:
             os.remove(os.path.join(DATA_CACHE, file))
@@ -32,12 +31,12 @@ def _clean_cache(file=None):
 
 # Main functions:
 
-def query_Blast(seq, program=Program, database=Database_PDB, filters="", email="", debug_mode=False):
+def query_Blast(seq, program=Program, database=Database_PDB, filters="", email="", debug_mode = False):
     """ Submit a PUT query to Blast and return the response object"""
 
-    Query = "QUERY=" + seq + "&"
-    PUT_query = URL + PUT_Request + Query + Program + Database_PDB + filters + email
-    if debug_mode == True:
+    query = "QUERY=" + seq + "&"
+    PUT_query = URL + PUT_Request + query + program + database + filters + email
+    if debug_mode:
         print(PUT_query)
     p = requests.put(PUT_query)  # Submit the request to the BLAST site
     return p
@@ -168,7 +167,7 @@ def Blast_sequence(seq, filename="temporary", file_type="html", keep_files=True)
         path = download_html_file(s, filename)  # save the zip/json file
         list_matches = html_reader(path)  # extract the hits IDs
 
-    if keep_files == False:  # delete the result files
+    if keep_files is False:  # delete the result files
         os.remove(path)
     return list_matches
 
