@@ -270,8 +270,8 @@ class Translate(Transcribe):
 
     def _translation(self):
         """ Wrapper function to perform translation of orf genes. """
-        self.genes_data['protein'] = self.genes_data.apply(lambda x: self.translate(x.mrna), axis=1)
-        self.proteins = list(self.genes_data['protein'])
+        self.genes_data['amino_acid_sequence'] = self.genes_data.apply(lambda x: self.translate(x.mrna), axis=1)
+        self.proteins = list(self.genes_data['amino_acid_sequence'])
         self.proteins_table = self.genes_data.drop(columns='mrna')
 
     def store_proteins(self, path: str) -> None:

@@ -1,5 +1,6 @@
 from sequence_assembly import MSA, Assembly
 from gene_finder import Transcribe, Translate
+from group4_template.group4.Blast import Blast_orfs
 import click
 
 
@@ -34,8 +35,8 @@ def assemble_seq(sequences, output, show):
     """
     Performs De Novo sequence assembly
     Args:
-        sequences: (str) path to file with sequences
-        output: (str) path to output file
+        sequences: (str) output to file with sequences
+        output: (str) output to output file
         show: (bool) option to print output to standout
 
     """
@@ -56,10 +57,10 @@ def transcription(dna_sequence, reverse, threshold, output, show):
     """
     Performs process of transcription on a given dna sequence.
     Args:
-        dna_sequence: (str) path to file containing dna sequence
+        dna_sequence: (str) output to file containing dna sequence
         reverse: (bool) option to use complementary strand of dna also
         threshold: (int) minimum length of amino-acid sequence (excluding start and stop codon)
-        output: (str) path to output file
+        output: (str) output to output file
         show: (bool) option to print output to standout
 
     """
@@ -80,18 +81,63 @@ def translation(dna_sequence, reverse, threshold, output, show):
     """
     Performs process of translation on a given dna sequence.
     Args:
-        dna_sequence: (str) path to file containing dna sequence
+        dna_sequence: (str) output to file containing dna sequence
         reverse: (bool) option to use complementary strand of dna also
         threshold: (int) minimum length of amino-acid sequence (excluding start and stop codon)
-        output: (str) path to output file
+        output: (str) output to output file
         show: (bool) option to print output to standout
 
     """
     obj = Translate(dna=dna_sequence, reverse=reverse, threshold=threshold, output_path=output)
-    proteins_table = obj.proteins_table
+    protein_table = obj.protein_table
 
     if show is True:
-        click.echo(proteins_table)
+        click.echo(protein_table)
+
+
+@protein_prediction.command('predict')
+@click.argument('orflist')
+@click.option('-k', '--keep_files', default=True, help="Decide if to store the file results or erase")
+@click.option('-f', '--filename', default="temporary", help="Give a file name where the results will be saved.")
+@click.option('-t', '--file_type', default="html",
+              help="Decide in which format to save the results.Allowed format are html or zip")
+def predict(orflist, filename, file_type, keep_files):
+    list_results = Blast_orfs(orflist, filename, file_type, keep_files)
+    print(list_results)
+
+
+@protein_prediction.command('predict_pro')
+@click.argument('sequences', type=click.Path(exists=True))
+@click.option('-o', '--output', default=None, help='Option to store output')
+@click.option('-p', '--show', is_flag=True, default=False, help='Option to print formatted output')
+@click.option('-r', '--reverse', is_flag=True, default=True, help='Use reverse strand also')
+@click.option('-n', '--threshold', type=int, default=20, help='Threshold for amino-acid sequence length')
+@click.option('-k', '--keep_files', default=True, help="Decide if to store the file results or erase")
+@click.option('-f', '--filename', default="temporary", help="Give a file name where the results will be saved.")
+@click.option('-t', '--file_type', default="html", help="Decide in which format to save the results.Allowed format are html or zip")
+def predict_pro(sequences, reverse, threshold, show, output, filename, file_type, keep_files):
+    assembled_dna = Assembly(sequences=sequences).assembled_sequence
+    obj = Translate(dna=assembled_dna, reverse=reverse, threshold=threshold)
+    protein_list = obj.proteins
+    protein_table = obj.proteins_table
+    protein_dict = Blast_orfs(protein_list, filename, file_type, keep_files)
+    protein_table['predicted_proteins'] = protein_table['amino_acid_sequence'].apply(lambda x: protein_dict[x])
+    if show is True:
+        click.echo(f'Assembled sequence : \n {assembled_dna}\n')
+        click.echo(f'mRNA sequence (forward) : \n {obj.f_mrna}\n')
+        click.echo(f'mRNA sequence (reverse) : \n {obj.r_mrna}\n')
+        click.echo(protein_table)
+
+    if output is not None:
+        file_format = output.split('.')[-1]
+        if file_format == 'csv':
+            protein_table.to_csv(output, sep=',', header=False, index=False)
+        elif file_format == 'tsv':
+            protein_table.to_csv(output, sep='\t', header=False, index=False)
+        elif file_format == 'txt':
+            protein_table.to_csv(output, sep=' ', header=False, index=False)
+        else:
+            raise ValueError(f'Format "{file_format}" is not supported (supported formats: csv, tsv, txt)')
 
 
 if __name__ == '__main__':
