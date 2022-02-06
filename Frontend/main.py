@@ -1,12 +1,12 @@
 import pandas as pd
-from task1 import *
-from task2 import *
-from task3 import *
+from group4_template.sequence_assembly import *
+from group4_template.gene_finder import *
+from group4_template.Blast import *
 from werkzeug.utils import secure_filename
 from req import UPLOAD_FOLDER
 from flask import Flask, flash, render_template, request, redirect, url_for
 
-ALLOWED_EXTENSIONS = {"fasta", "fna", "ffn", "faa", "frn", "fa", "txt", "fastq"}
+ALLOWED_EXTENSIONS = {"fasta", "txt", "fastq"}
 
 app = Flask(__name__)
 app.secret_key = b'_5#034587Q564482c]/'
@@ -41,20 +41,35 @@ def upload_file():
         elif file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
             txtfile = open(str(os.path.join(UPLOAD_FOLDER, 'filename.txt')), "w")
             txtfile.write(filename)
             txtfile.close()
 
             flash('File uploaded successfully')
             result1 = get1()  # Assembled DNA
-            obj=Translate(dna=result1)
+            print("Result1 done")
+            obj=Translate(dna=result1, threshold=70)
             result2=''.join(obj.f_mrna)  # mRNA seq
+            print("Result2 done")
             result3=''.join(obj.r_mrna)  # Reversed mRNA seq
-            obj=Translate(dna=result1)
-            #result22= obj.proteins
-            final_dict = Blast_orfs(obj.proteins, 'filename.html')
-            result4 = pd.DataFrame.from_dict(final_dict)
+            #obj=Translate(dna=result1)
+            print("Result3 done")
+            result22= obj.proteins
+            print("Result4 done", result22)
+
+            txtfile = open(str(os.path.join(UPLOAD_FOLDER, 'ORFList.txt')), "w")
+            txtfile.write(str(result22))
+            txtfile.close()
+
+            final_dict = Blast_orfs(obj.proteins)
+
+            #final_dict={'TPLALKLNLSASPLTAAKQIRIQVARLK': ['7ABG_A4','7ABF_A4', '4Y98_A'],'SFSTPASISPTVAVCSRIRPSLLPPSTRVSQVLSTTRPLIFN': ['7ABG_A4','7ABF_A4', '4Y98_A']}
+            obj.proteins_table['predicted_proteins'] = obj.proteins_table['amino_acid_sequence'].apply(lambda x: final_dict[x])
+
+
+            print(final_dict)
+            result4=obj.proteins_table
+            #result4 = pd.DataFrame.from_dict(final_dict)
             return render_template('upload.html', rs1=result1, rs2=result2,rs3=result3, tables=[result4.to_html(classes='data', header="true")])
         else:
             flash('Not allowed')
@@ -63,13 +78,11 @@ def upload_file():
 
 
 def get1():
-    exec(open("task1.py").read())
-
     txtfile = open(str(os.path.join(UPLOAD_FOLDER, 'filename.txt')), "r")
     txtfiledata = txtfile.read()
     txtfile.close()
     fastafilepath = os.path.join(UPLOAD_FOLDER, txtfiledata)
-
+    #obj = Assembly(sequences=str(fastafilepath))
     obj = Assembly(sequences=str(fastafilepath))
     seq = obj.assembled_sequence
     return seq

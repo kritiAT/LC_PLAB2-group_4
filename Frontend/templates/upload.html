@@ -14,7 +14,9 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 
+</script>
 <style>
 html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
 .w3-sidebar {
@@ -39,6 +41,10 @@ table.dataframe, .dataframe th, .dataframe td {
   padding: 10px;
   margin-bottom: 40px;
   font-size: 0.9em;
+}
+#wrapper {
+    overflow-x: auto;
+    width: 100%;
 }
 
 </style>
@@ -113,12 +119,16 @@ table.dataframe, .dataframe th, .dataframe td {
        	<button type="button" onclick="tableToCSV()">
             Download as CSV
         </button>
+		<div id="wrapper">
 	{% for table in tables %}
         {{ table|safe }}
     {% endfor %}
-
+    </div>
   </div>
 
+<div id='wrapper'>
+
+</div>
 
 {% endblock %}
       <p>
@@ -236,6 +246,7 @@ table.dataframe, .dataframe th, .dataframe td {
             document.body.removeChild(temp_link);
         }
     </script>
+
 
 </body>
 </html>
