@@ -217,8 +217,8 @@ def zip_reader(filepath):
 #     assert output_file[-4:] == "html", print("Save the results in html file format!")
 
 
-def Blast_sequence(seq:str, program: str = Program, database: str = Database_PDB, filters: str = "", email: str = "",
-                   filename="temporary", file_type="html", keep_files=True)->list:
+def Blast_sequence(seq: str, filename = "temporary", program: str = Program, database: str = Database_PDB,
+                   filters: str = "", email: str = "", file_type = "html", keep_files = True)->list:
 
     """Given sequence, it blast it against the specified database and return list of possible proteins.
     :param seq: str.
@@ -291,7 +291,8 @@ def Blast_orfs(OrfList:list, filename:str="temporary", program:str = Program, da
     for orf in OrfList:
         n += 1
         file_name = "orf" + str(n) + "_" + filename
-        list_matches = Blast_sequence(orf, file_name, program, database, filters,  file_type, email, keep_files)
+        list_matches = Blast_sequence(orf, filename=file_name, program=program, database=database, filters=filters,
+                                      email=email, file_type=file_type, keep_files=keep_files)
         dict_matches[orf] = list_matches
         time.sleep(10)  # Do not contact the server more often than once every 10 seconds.
     print("The job is complete for all the sequences!")
