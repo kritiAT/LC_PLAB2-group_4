@@ -1,17 +1,16 @@
-# Protein Identification via k-mer Genetic Sequence Assembly
+# Group4 Package Documentation
 
-### Take a list of DNA strands as inputs, and perform multiple sequence alignment to reconstruct the genetic sequence.
-### The compiled genetic sequence is then transcribed to its corresponding mRNA sequence.ORFs are then identified  to predict possible amino acid sequences.
-### The generated amino acid sequences are then aligned against a protein database using blast server. 
-### Finally, the list of possible proteins is returned.
+
+
+## Protein Prediction
 
 The aminoacidic sequences are provided as a list of strings which are used to 
 build a query which will be submitted to blast server for an alignment against sequences in 
 a choice database (default is PDB). 
 
 In the request is possible to specify the database, 
-the blast server to use, the email adress for contact purposes and other blast parameters.
-The Request module is used to sumbit the query. 
+the blast server to use, the email address for contact purposes and other blast parameters.
+The Request module is used to submit the query. 
 
 The result response will be output by the function *query_Blast*. 
 The Request ID (rid) will be extracted by the function *extract_attribute* and it will used to
@@ -26,4 +25,50 @@ and will extract the result IDs of the predicted proteins, which will be returne
 The wrapper function *Blast_orfs* will loop into a list of compiled aminoacidic sequence and
 will return a dictionary where the keys are the sequences and the values are the list of IDs.
 
+
+## GUI
+
+Using flask to build a web application to process fixed-length DNA strands.
+
+The upload function only allows .fasta .fastq .txt files.
+
+After uploading your file of DNA strands and submitting the file:
+
+1. Depending on the length of your sequence, you need to wait until the assembly is finished.
+
+2. You will also need to wait for BLAST tool to analyze your sequence and give you the predicted proteins list.
+ 
+### Run Flask
+
+`$ python main.py`
+
+In flask, Default port is `5000`
+
+Index page:  `http://127.0.0.1:5000/`
+
+Upload page: `http://127.0.0.1:5000/upload`
+
+
+### Run with Docker
+
+
+
+`$ docker build . -t plab2:latest`
+
+`$ docker run --name plab2_test -p 5000:5000 -d plab2:latest`
+
+
+
+### References
+
+Offical Website
+
+- [Flask](http://flask.pocoo.org/)
+
+Tutorial
+
+- [Flask Overview](https://www.slideshare.net/maxcnunes1/flask-python-16299282)
+- [In Flask we trust](http://igordavydenko.com/talks/ua-pycon-2012.pdf)
+
+[Wiki Page](https://github.com/tsungtwu/flask-example/wiki)
 
