@@ -1,10 +1,11 @@
 import pandas as pd
-from group4_template.sequence_assembly import *
-from group4_template.gene_finder import *
-from group4_template.Blast import *
+
 from werkzeug.utils import secure_filename
-from req import UPLOAD_FOLDER
 from flask import Flask, flash, render_template, request, redirect, url_for
+from group4_template.group4.sequence_assembly import *
+from group4_template.group4.gene_finder import *
+from group4_template.group4.Blast import *
+from group4_template.group4.req import UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {"fasta", "txt", "fastq"}
 
@@ -48,7 +49,7 @@ def upload_file():
             flash('File uploaded successfully')
             result1 = get1()  # Assembled DNA
             print("Result1 done")
-            obj=Translate(dna=result1, threshold=70)
+            obj=Translate(dna=result1)
             result2=''.join(obj.f_mrna)  # mRNA seq
             print("Result2 done")
             result3=''.join(obj.r_mrna)  # Reversed mRNA seq
@@ -60,13 +61,8 @@ def upload_file():
             txtfile = open(str(os.path.join(UPLOAD_FOLDER, 'ORFList.txt')), "w")
             txtfile.write(str(result22))
             txtfile.close()
-
             final_dict = Blast_orfs(obj.proteins)
-
-            #final_dict={'TPLALKLNLSASPLTAAKQIRIQVARLK': ['7ABG_A4','7ABF_A4', '4Y98_A'],'SFSTPASISPTVAVCSRIRPSLLPPSTRVSQVLSTTRPLIFN': ['7ABG_A4','7ABF_A4', '4Y98_A']}
             obj.proteins_table['predicted_proteins'] = obj.proteins_table['amino_acid_sequence'].apply(lambda x: final_dict[x])
-
-
             print(final_dict)
             result4=obj.proteins_table
             #result4 = pd.DataFrame.from_dict(final_dict)
@@ -88,6 +84,6 @@ def get1():
     return seq
 
 
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    FLASK_PORT= int(os.environ.get('FLASK_PORT', '5000'))
+    app.run(debug=True, host='127.0.0.1', port=FLASK_PORT)

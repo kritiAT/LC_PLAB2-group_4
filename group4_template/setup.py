@@ -7,16 +7,8 @@ from setuptools import setup, find_packages
 requirements = ['pandas',
                 'requests',
                 'click',
-                'os',
                 'flask',
                 'numpy',
-                'copy',
-                'itertools',
-                'time',
-                'pathlib',
-                're',
-                'json',
-                'zipfile',
                 'werkzeug']
 
 test_requirements = ['pytest>=3', ]
