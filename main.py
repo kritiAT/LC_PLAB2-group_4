@@ -45,28 +45,21 @@ def upload_file():
             txtfile = open(str(os.path.join(UPLOAD_FOLDER, 'filename.txt')), "w")
             txtfile.write(filename)
             txtfile.close()
-
             flash('File uploaded successfully')
             result1 = get1()  # Assembled DNA
-            print("Result1 done")
             obj=Translate(dna=result1)
             result2=''.join(obj.f_mrna)  # mRNA seq
-            print("Result2 done")
             result3=''.join(obj.r_mrna)  # Reversed mRNA seq
-            #obj=Translate(dna=result1)
-            print("Result3 done")
-            result22= obj.proteins
-            print("Result4 done", result22)
-
+            aa_seq= obj.proteins
+            print(aa_seq)
             txtfile = open(str(os.path.join(UPLOAD_FOLDER, 'ORFList.txt')), "w")
-            txtfile.write(str(result22))
+            txtfile.write(str(aa_seq))
             txtfile.close()
             final_dict = Blast_orfs(obj.proteins)
             obj.proteins_table['predicted_proteins'] = obj.proteins_table['amino_acid_sequence'].apply(lambda x: final_dict[x])
             print(final_dict)
             result4=obj.proteins_table
-            #result4 = pd.DataFrame.from_dict(final_dict)
-            return render_template('upload.html', rs1=result1, rs2=result2,rs3=result3, tables=[result4.to_html(classes='data', header="true")])
+            return render_template('upload.html', rs1=result1, rs2=result2, rs3=result3, tables=[result4.to_html(classes='data', header="true")])
         else:
             flash('Not allowed')
             return render_template('upload.html')
@@ -78,7 +71,6 @@ def get1():
     txtfiledata = txtfile.read()
     txtfile.close()
     fastafilepath = os.path.join(UPLOAD_FOLDER, txtfiledata)
-    #obj = Assembly(sequences=str(fastafilepath))
     obj = Assembly(sequences=str(fastafilepath))
     seq = obj.assembled_sequence
     return seq
