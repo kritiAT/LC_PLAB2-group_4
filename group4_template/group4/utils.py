@@ -1,5 +1,4 @@
-# import logging
-# logger = logging.getLogger(__name__)
+""" Utils module """
 
 from pathlib import Path
 import os
@@ -17,11 +16,10 @@ PUT_Request = "CMD=put&"
 GET_Request = "CMD=get&"
 
 # PUT Parameters
-#Query = "QUERY="+toy_seq+"&"   # take from Faiza
+# Query = "QUERY="+toy_seq+"&"
 Program = "PROGRAM=blastp&"
 Database_PDB = "DATABASE=pdb"
 
 # GET Parameters
 RID = "RID ="
-GET_query_head = URL+ GET_Request + "RID="
-
+GET_query_head = URL + GET_Request + "RID="
