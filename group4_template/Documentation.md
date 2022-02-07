@@ -1,5 +1,6 @@
 # Group4 Package Documentation
 
+
 The package performs likelihood protein identification via k-mer genetic sequence assembly.
 
 The ``group4`` package a pipeline for assembling fixed-length DNA strand reads into a complete sequence and predict which protein the completed strand may represent.
