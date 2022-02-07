@@ -3,7 +3,7 @@
 import os
 import pytest
 
-from group4_template.group4.gene_finder import Transcribe, Translate
+from group4.gene_finder import Transcribe, Translate
 
 
 class TestTranscribe:

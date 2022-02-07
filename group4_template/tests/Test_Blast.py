@@ -3,10 +3,10 @@
 import re
 import requests
 import time
-from group4_template.group4.utils import *  # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head, DATA_CACHE
+from group4.utils import *  # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head, DATA_CACHE
 from pathlib import Path
 import os
-from group4_template.group4.Blast import extract_attribute, check_request_status, Blast_sequence
+from group4.Blast import extract_attribute, check_request_status, Blast_sequence
 
 
 # ok

@@ -2,7 +2,7 @@ import os
 import re
 import time
 import requests
-from group4_template.group4.req import *  # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head, DATA_CACHE
+from group4.req import *  # URL, PUT_Request, GET_Request, Program, Database_PDB, RID, GET_query_head, url_request_head, DATA_CACHE
 
 
 # Debug/auxiliary functions:

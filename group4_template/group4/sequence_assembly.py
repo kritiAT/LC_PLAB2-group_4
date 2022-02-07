@@ -1,4 +1,4 @@
-from group4_template.group4.constants import scoring_matrix
+from group4.constants import scoring_matrix
 from itertools import combinations
 from copy import deepcopy
 

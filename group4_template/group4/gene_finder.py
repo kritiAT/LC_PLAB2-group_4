@@ -1,5 +1,5 @@
 import pandas as pd
-from group4_template.group4.constants import *
+from group4.constants import *
 
 
 class Transcribe:
