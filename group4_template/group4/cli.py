@@ -1,7 +1,7 @@
 """ Script for a working command line interface (CLI) """
 
-from sequence_assembly import MSA, Assembly
-from gene_finder import Transcribe, Translate
+from group4_template.group4.sequence_assembly import MSA, Assembly
+from group4_template.group4.gene_finder import Transcribe, Translate
 from group4_template.group4.Blast import Blast_orfs
 
 import click
