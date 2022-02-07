@@ -1,7 +1,7 @@
 """ Test for the module Query_Blast"""
 
-from group4_template.group4.Blast import *
-from group4_template.group4.utils import *
+from group4.Blast import *
+from group4.utils import *
 
 class TestBlast():
     
