@@ -7,16 +7,8 @@ from setuptools import setup, find_packages
 requirements = ['pandas',
                 'requests',
                 'click',
-                'os',
                 'flask',
                 'numpy',
-                'copy',
-                'itertools',
-                'time',
-                'pathlib',
-                're',
-                'json',
-                'zipfile',
                 'werkzeug']
 
 test_requirements = ['pytest>=3', ]
@@ -40,7 +32,7 @@ setup(
     description="Group Project Package",
     entry_points={
         'console_scripts': [
-            'group4=group4.cli:main',
+            'group4=group4.cli:protein_prediction',
         ],
     },
     install_requires=requirements,

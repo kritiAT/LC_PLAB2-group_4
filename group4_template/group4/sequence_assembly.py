@@ -1,9 +1,9 @@
-
-from constants import scoring_matrix
-
-import numpy as np
+from group4.constants import scoring_matrix
 from itertools import combinations
 from copy import deepcopy
+
+import numpy as np
+
 
 
 class FastaTools:

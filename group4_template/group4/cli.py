@@ -1,6 +1,9 @@
-from sequence_assembly import MSA, Assembly
-from gene_finder import Transcribe, Translate
-from group4_template.group4.Blast import Blast_orfs
+""" Script for a working command line interface (CLI) """
+
+from group4.sequence_assembly import MSA, Assembly
+from group4.gene_finder import Transcribe, Translate
+from group4.Blast import Blast_orfs
+
 import click
 
 
@@ -35,7 +38,7 @@ def assemble_seq(sequences, output, show):
     """
     Performs De Novo sequence assembly
     Args:
-        sequences: (str) output to file with sequences
+        sequences: (str) input file with sequences
         output: (str) output to output file
         show: (bool) option to print output to standout
 
@@ -89,7 +92,7 @@ def translation(dna_sequence, reverse, threshold, output, show):
 
     """
     obj = Translate(dna=dna_sequence, reverse=reverse, threshold=threshold, output_path=output)
-    protein_table = obj.protein_table
+    protein_table = obj.proteins_table
 
     if show is True:
         click.echo(protein_table)
@@ -102,6 +105,16 @@ def translation(dna_sequence, reverse, threshold, output, show):
 @click.option('-t', '--file_type', default="html",
               help="Decide in which format to save the results.Allowed format are html or zip")
 def predict(orflist, filename, file_type, keep_files):
+    """
+    Given a list of orfs it blasts them against pdb database and return a dictionary with the orf as key and the list of
+    alignments as value.
+    Args:
+        orflist: (list) list of sequences to be aligned
+        filename: (str) file where the results will be stored if keep_file is in default mode
+        file_type: (str) type of file to save
+        keep_files: (bool) If False will erase the saved file results, else it will keep them
+
+    """
     list_results = Blast_orfs(orflist, filename, file_type, keep_files)
     print(list_results)
 
@@ -116,6 +129,19 @@ def predict(orflist, filename, file_type, keep_files):
 @click.option('-f', '--filename', default="temporary", help="Give a file name where the results will be saved.")
 @click.option('-t', '--file_type', default="html", help="Decide in which format to save the results.Allowed format are html or zip")
 def predict_pro(sequences, reverse, threshold, show, output, filename, file_type, keep_files):
+    """
+    Performs Likelihood Protein Identification via k-mer Genetic Sequence Assembly.
+    Args:
+        sequences: (str) input file with sequences
+        reverse: (bool) option to use complementary strand of dna also
+        threshold: (int) minimum length of amino-acid sequence (excluding start and stop codon)
+        show: (bool) option to print formatted output to standout
+        output: (str) output to output file
+        filename: (str) file where the results will be stored if keep_file is in default mode
+        file_type: (str) format type of file
+        keep_files: (bool) If False will erase the saved file results, else it will keep them
+
+    """
     assembled_dna = Assembly(sequences=sequences).assembled_sequence
     obj = Translate(dna=assembled_dna, reverse=reverse, threshold=threshold)
     protein_list = obj.proteins

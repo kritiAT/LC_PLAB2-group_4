@@ -1,5 +1,5 @@
 import pandas as pd
-from constants import codon_table
+from group4.constants import *
 
 
 class Transcribe:
