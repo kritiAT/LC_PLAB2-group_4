@@ -2,10 +2,10 @@ import pandas as pd
 
 from werkzeug.utils import secure_filename
 from flask import Flask, flash, render_template, request, redirect, url_for
-from group4_template.group4.sequence_assembly import *
-from group4_template.group4.gene_finder import *
-from group4_template.group4.Blast import *
-from group4_template.group4.req import UPLOAD_FOLDER
+from group4.sequence_assembly import *
+from group4.gene_finder import *
+from group4.Blast import *
+from group4.req import UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {"fasta", "txt", "fastq"}
 
