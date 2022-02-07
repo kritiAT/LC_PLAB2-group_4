@@ -5,7 +5,7 @@ from flask import Flask, flash, render_template, request, redirect, url_for
 from group4.sequence_assembly import *
 from group4.gene_finder import *
 from group4.Blast import *
-from group4.req import UPLOAD_FOLDER
+from group4.utils import UPLOAD_FOLDER
 
 ALLOWED_EXTENSIONS = {"fasta", "txt", "fastq"}
 
