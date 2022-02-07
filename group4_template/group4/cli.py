@@ -100,11 +100,15 @@ def translation(dna_sequence, reverse, threshold, output, show):
 
 @protein_prediction.command('predict')
 @click.argument('orflist')
-@click.option('-k', '--keep_files', default=True, help="Decide if to store the file results or erase")
+@click.option('-k', '--keep_files', default=True, help="Decide if to store the file results or erase it")
 @click.option('-f', '--filename', default="temporary", help="Give a file name where the results will be saved.")
+@click.option('-p', '--program', default="PROGRAM=blastp&", help="Select the blast program (e.g. 'PROGRAM=blastn&'")
+@click.option('-d', '--database', default="DATABASE=pdb", help="Select the database (e.g. 'DATABASE=refseq'")
+@click.option('-fi', '--filters', default="", help="can add filters to the blast aligment (e.g. '&THRESHOLD=13'")
+@click.option('-fi', '--email', default="", help="can add personal email for contact purposes")
 @click.option('-t', '--file_type', default="html",
               help="Decide in which format to save the results.Allowed format are html or zip")
-def predict(orflist, filename, file_type, keep_files):
+def predict(orflist, filename, program, database, filters, email, file_type, keep_files):
     """
     Given a list of orfs it blasts them against pdb database and return a dictionary with the orf as key and the list of
     alignments as value.
@@ -115,7 +119,7 @@ def predict(orflist, filename, file_type, keep_files):
         keep_files: (bool) If False will erase the saved file results, else it will keep them
 
     """
-    list_results = Blast_orfs(orflist, filename, file_type, keep_files)
+    list_results = Blast_orfs(orflist, filename, program, database, filters, email, file_type, keep_files)
     print(list_results)
 
 
@@ -128,7 +132,11 @@ def predict(orflist, filename, file_type, keep_files):
 @click.option('-k', '--keep_files', default=True, help="Decide if to store the file results or erase")
 @click.option('-f', '--filename', default="temporary", help="Give a file name where the results will be saved.")
 @click.option('-t', '--file_type', default="html", help="Decide in which format to save the results.Allowed format are html or zip")
-def predict_pro(sequences, reverse, threshold, show, output, filename, file_type, keep_files):
+@click.option('-p', '--program', default="PROGRAM=blastp&", help="Select the blast program (e.g. 'PROGRAM=blastn&'")
+@click.option('-d', '--database', default="DATABASE=pdb", help="Select the database (e.g. 'DATABASE=refseq'")
+@click.option('-fi', '--filters', default="", help="can add filters to the blast aligment (e.g. '&THRESHOLD=13'")
+@click.option('-fi', '--email', default="", help="can add personal email for contact purposes")
+def predict_pro(sequences, reverse, threshold, show, output, filename, program, database, filters, email, file_type, keep_files):
     """
     Performs Likelihood Protein Identification via k-mer Genetic Sequence Assembly.
     Args:
@@ -146,7 +154,7 @@ def predict_pro(sequences, reverse, threshold, show, output, filename, file_type
     obj = Translate(dna=assembled_dna, reverse=reverse, threshold=threshold)
     protein_list = obj.proteins
     protein_table = obj.proteins_table
-    protein_dict = Blast_orfs(protein_list, filename, file_type, keep_files)
+    protein_dict = Blast_orfs(protein_list, filename,program, database, filters, email, file_type, keep_files)
     protein_table['predicted_proteins'] = protein_table['amino_acid_sequence'].apply(lambda x: protein_dict[x])
     if show is True:
         click.echo(f'Assembled sequence : \n {assembled_dna}\n')
