@@ -291,6 +291,30 @@ def Blast_orfs(OrfList:list, filename:str="temporary", program:str = Program, da
     for orf in OrfList:
         n += 1
         file_name = "orf" + str(n) + "_" + filename
+        file_path=os.path.join(DATA_CACHE, file_name)
+        if os.path.isfile(file_path + ".html") or os.path.isfile(file_path + ".zip"):
+            print ("The results are already in the folder")
+            if file_type == "html":
+                path = file_path + ".html"
+                list_matches =html_reader(path)
+            else:
+                path = file_path + ".zip"
+                list_matches = zip_reader(path)
+            if keep_files is False:  # delete the result files
+                os.remove(path)
+        else:
+            list_matches = Blast_sequence(orf, filename=file_name, program=program, database=database, filters=filters,
+                                      email=email, file_type=file_type, keep_files=keep_files)
+        dict_matches[orf] = list_matches
+        time.sleep(10)  # Do not contact the server more often than once every 10 seconds.
+    print("The job is complete for all the sequences!")
+    return dict_matches
+
+    n = 0
+    dict_matches = {}
+    for orf in OrfList:
+        n += 1
+        file_name = "orf" + str(n) + "_" + filename
         list_matches = Blast_sequence(orf, filename=file_name, program=program, database=database, filters=filters,
                                       email=email, file_type=file_type, keep_files=keep_files)
         dict_matches[orf] = list_matches
